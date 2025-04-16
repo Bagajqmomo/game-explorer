@@ -23,8 +23,6 @@ export const fetchGames = createAsyncThunk(
       console.warn("Could not parse current page:", error);
     }
 
-    console.log(res.data);
-
     return {
       results: res.data.results,
       next: res.data.next,

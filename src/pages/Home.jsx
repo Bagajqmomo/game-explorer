@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchGames } from "../features/games/gamesSlice";
 import Pagination from "../components/pagination";
@@ -9,16 +10,19 @@ import noData from "../assets/images/no-data.png";
 
 const Home = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchTerm = searchParams.get("search") || "";
+
   const games = useSelector((state) => state.games.items);
   const status = useSelector((state) => state.games.status);
   const nextPageUrl = useSelector((state) => state.games.nextPageUrl);
   const prevPageUrl = useSelector((state) => state.games.prevPageUrl);
   const currentPage = useSelector((state) => state.games.currentPage);
 
-  // Fetch initial data when the component is mounted
   useEffect(() => {
-    dispatch(fetchGames({ search: "", page: 1 }));
-  }, [dispatch]);
+    dispatch(fetchGames({ search: searchTerm, page: 1 }));
+  }, [dispatch, searchTerm]);
 
   const handlePageChange = ({ fullUrl }) => {
     dispatch(fetchGames({ fullUrl }));
@@ -27,9 +31,10 @@ const Home = () => {
   return (
     <div className="py-16">
       <Header
-        onSearch={(term) => dispatch(fetchGames({ search: term, page: 1 }))}
+        onSearch={(term) => {
+          navigate(`/?search=${encodeURIComponent(term)}`);
+        }}
       />
-      {/* Status Messages */}
       {status === "loading" && (
         <div className="container m-auto min-h-[90vh] flex justify-center items-center">
           <span className="loader"></span>
@@ -38,8 +43,6 @@ const Home = () => {
       {status === "failed" && (
         <p className="text-red-500">Failed to load games.</p>
       )}
-
-      {/* Pagination Controls */}
       {status === "succeeded" && (
         <section className="container m-auto">
           <h2 className="text-light text-3xl font-bold mb-8">Game List</h2>
@@ -52,7 +55,7 @@ const Home = () => {
             </div>
           ) : (
             <>
-              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3  2xl:grid-cols-5">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-5">
                 {games.map((game) => (
                   <Game game={game} key={game.id} />
                 ))}

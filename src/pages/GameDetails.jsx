@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { fetchGameDetails } from "../features/games/gameDetailsSlice";
-import { useNavigate } from "react-router-dom";
 import prevImg from "../assets/images/prev.png";
+import Header from "../components/Header";
 
 const platformIcons = {
   pc: "../src/assets/images/window.png",
@@ -27,7 +27,12 @@ const GameDetails = () => {
 
   return (
     <div className="py-16">
-      {/* Status Messages */}
+      <Header
+        onSearch={(term) => {
+          // Navigate back to home with query param
+          navigate(`/?search=${encodeURIComponent(term)}`);
+        }}
+      />
       {status === "loading" && (
         <div className="container m-auto min-h-[90vh] flex justify-center items-center">
           <span className="loader"></span>
@@ -37,7 +42,7 @@ const GameDetails = () => {
         <p className="text-red-500">Failed to load games.</p>
       )}
       {status === "succeeded" && (
-        <div className="p-8 max-w-5xl mx-auto">
+        <section className="container m-auto">
           <button
             onClick={() => navigate(-1)}
             className="flex gap-4 mb-6 items-center cursor-pointer"
@@ -50,7 +55,7 @@ const GameDetails = () => {
           <img
             src={game.background_image}
             alt={game.name}
-            className="mb-8 rounded-lg"
+            className="mb-8 rounded-lg w-full object-cover max-h-[700px]"
           />
           <div className="flex gap-6 items-center mb-4 flex-wrap">
             <h1 className="text-4xl text-light font-bold">{game.name}</h1>
@@ -74,7 +79,7 @@ const GameDetails = () => {
             Released: {game.released}
           </p>
           <p className="text-base text-gray-300">{game.description_raw}</p>
-        </div>
+        </section>
       )}
     </div>
   );
