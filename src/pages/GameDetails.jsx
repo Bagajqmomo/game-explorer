@@ -49,7 +49,7 @@ const GameDetails = () => {
             <img
               src={game.background_image}
               alt={game.name}
-              className="mb-6 rounded-lg shadow-lg"
+              className="mb-6 rounded-lg shadow-lg object-cover w-full"
             />
           )}
           <div className="flex gap-6 items-center mb-4 flex-wrap">
