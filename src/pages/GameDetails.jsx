@@ -35,7 +35,6 @@ const GameDetails = () => {
       {status === "succeeded" && game ? (
         <section className="container m-auto">
           <button
-            on
             onClick={() => navigate(-1)}
             className="flex gap-4 mb-6 items-center cursor-pointer"
           >
