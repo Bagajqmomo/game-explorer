@@ -23,7 +23,11 @@ const Home = () => {
   } = useSelector((state) => state.games);
 
   useEffect(() => {
-    dispatch(fetchGames({ search: searchTerm, page: 1 }));
+    if (searchTerm) {
+      dispatch(fetchGames({ search: searchTerm, page: 1 }));
+    } else {
+      dispatch(fetchGames({ page: 1 }));
+    }
   }, [dispatch, searchTerm]);
 
   const handlePageChange = ({ fullUrl }) => {
