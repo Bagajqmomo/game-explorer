@@ -1,13 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
-const platformIcons = {
-  pc: "../src/assets/images/window.png",
-  playstation: "../src/assets/images/ps.png",
-  xbox: "../src/assets/images/xbox.png",
-  ios: "../src/assets/images/mobile.png",
-  android: "../src/assets/images/android.png",
-};
+import platformIcons from "../utils/platformIcons";
+import placeholder from "../assets/images/placeholder.png";
 
 const Game = ({ game }) => {
   const platforms = game.parent_platforms || [];
@@ -16,10 +10,11 @@ const Game = ({ game }) => {
     <Link to={`games/${game.id}`}>
       <div className="bg-card h-full rounded-xl shadow-card overflow-hidden flex flex-col">
         <img
-          src={game.background_image}
-          alt={game.name}
+          src={game.background_image || placeholder}
+          alt={game.name || "No image"}
           className="w-full h-[180px] object-cover rounded-md"
         />
+
         <div className="p-5 pb-5 flex flex-col gap-2">
           <div className="flex gap-2">
             {platforms.map(({ platform }) => {

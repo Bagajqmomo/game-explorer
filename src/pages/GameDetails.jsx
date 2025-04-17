@@ -1,49 +1,41 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchGameDetails } from "../features/games/gameDetailsSlice";
 import prevImg from "../assets/images/prev.png";
 import Header from "../components/Header";
-
-const platformIcons = {
-  pc: "../src/assets/images/window.png",
-  playstation: "../src/assets/images/ps.png",
-  xbox: "../src/assets/images/xbox.png",
-  ios: "../src/assets/images/mobile.png",
-  android: "../src/assets/images/android.png",
-};
+import platformIcons from "../utils/platformIcons";
 
 const GameDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useDispatch();
-  const game = useSelector((state) => state.gameDetails.item);
-  const status = useSelector((state) => state.gameDetails.status);
-  const platforms = game?.parent_platforms || [];
+  const { item: game, status } = useSelector((state) => state.gameDetails);
 
   useEffect(() => {
-    dispatch(fetchGameDetails(id));
+    if (id) dispatch(fetchGameDetails(id));
   }, [dispatch, id]);
+
+  console.log("Game object:", game);
+  console.log("Status:", status);
 
   return (
     <div className="py-16">
-      <Header
-        onSearch={(term) => {
-          // Navigate back to home with query param
-          navigate(`/?search=${encodeURIComponent(term)}`);
-        }}
-      />
+      <Header />
       {status === "loading" && (
-        <div className="container m-auto min-h-[90vh] flex justify-center items-center">
+        <div className="min-h-[90vh] flex justify-center items-center">
           <span className="loader"></span>
         </div>
       )}
+
       {status === "failed" && (
-        <p className="text-red-500">Failed to load games.</p>
+        <p className="text-red-500 text-center mt-8">Failed to load game.</p>
       )}
-      {status === "succeeded" && (
+
+      {status === "succeeded" && game ? (
         <section className="container m-auto">
           <button
+            on
             onClick={() => navigate(-1)}
             className="flex gap-4 mb-6 items-center cursor-pointer"
           >
@@ -52,24 +44,22 @@ const GameDetails = () => {
               Back
             </span>
           </button>
-          <img
-            src={game.background_image}
-            alt={game.name}
-            className="mb-8 rounded-lg w-full object-cover max-h-[700px]"
-          />
+
+          {game.background_image && (
+            <img
+              src={game.background_image}
+              alt={game.name}
+              className="mb-6 rounded-lg shadow-lg"
+            />
+          )}
           <div className="flex gap-6 items-center mb-4 flex-wrap">
             <h1 className="text-4xl text-light font-bold">{game.name}</h1>
-            <div className="flex gap-2">
-              {platforms.map(({ platform }) => {
-                const icon = platformIcons[platform.slug];
+            <div className="flex gap-4 flex-wrap">
+              {game.platforms?.map((p) => {
+                const slug = p.platform?.slug;
+                const icon = platformIcons[slug];
                 return icon ? (
-                  <img
-                    key={platform.id}
-                    src={icon}
-                    alt={platform.name}
-                    className="w-5 h-5"
-                    title={platform.name}
-                  />
+                  <img key={slug} src={icon} alt={slug} className="w-5 h-5" />
                 ) : null;
               })}
             </div>
@@ -80,6 +70,8 @@ const GameDetails = () => {
           </p>
           <p className="text-base text-gray-300">{game.description_raw}</p>
         </section>
+      ) : (
+        <span className="text-4xl text-light">No content</span>
       )}
     </div>
   );

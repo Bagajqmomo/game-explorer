@@ -1,27 +1,26 @@
+// components/Header.jsx
 import React, { useState } from "react";
-import { fetchGames } from "../features/games/gamesSlice";
+import { useNavigate, Link } from "react-router-dom";
 import logo from "../assets/images/logo.png";
-import { Link } from "react-router-dom";
 
-const Header = ({ onSearch }) => {
+const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
-  // Handle search form submission
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
-    onSearch(searchTerm);
-    setSearchTerm(""); // Optional: clear after search
+    navigate(`/?search=${encodeURIComponent(searchTerm)}`);
+    setSearchTerm("");
   };
 
   return (
     <div className="container m-auto mb-16">
       <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
         <Link to="/">
-          <img src={logo} className=" max-h-[66px] " />
+          <img src={logo} alt="Logo" className="max-h-[66px]" />
         </Link>
 
-        {/* Search Form */}
         <form
           onSubmit={handleSearch}
           className="flex gap-4 w-full justify-center"
@@ -31,7 +30,7 @@ const Header = ({ onSearch }) => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search for a game..."
-            className="w-full px-4 py-2 border rounded-3xl  search"
+            className="w-full px-4 py-2 border rounded-3xl search"
           />
         </form>
       </div>
